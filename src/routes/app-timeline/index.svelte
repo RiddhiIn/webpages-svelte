@@ -1,6 +1,8 @@
 <script>
 	import { constants } from '$lib/constants';
 	import Divider from '$lib/shared/Divider.svelte';
+	import Paragraph from '$lib/shared/Paragraph.svelte';
+
 	let VIDEO_PROVIDER = constants.videoProvider;
 	let apps = [
 		{
@@ -8,7 +10,7 @@
 			app: {
 				name: 'Hotstar',
 				package: 'in.startv.hotstar',
-				postTime: '04/03/2021',
+				postTime: '15/02/2022 16:09:45',
 				status: 'active',
 				icon: 'https://mofirst.pc.cdn.bitgravity.com/preview_images/9f814b26d0e6014cf10e1ea7583e7206.webp',
 				id: 62907
@@ -31,7 +33,7 @@
 				id: 145771
 			},
 			description:
-				'edBus is an Indian online bus ticketing platform providing ticket booking facility through its website, iOS and Android mobile apps. Headquartered in Bengaluru, India, it connects bus travellers with a network of over 2500 bus operators, across India, countries in South East Asia and Latin America. redBus is a subsidiary of Ibibo Group.The platform is also a part of India’s leading online travel company MakeMyTrip Limited. redBus currently runs in six countries – India, Malaysia, Indonesia, Singapore, Peru and Colombia and has so far registered over 180 million trips, with a customer base of over 20 million.',
+				'RedBus is an Indian online bus ticketing platform providing ticket booking facility through its website, iOS and Android mobile apps. Headquartered in Bengaluru, India, it connects bus travellers with a network of over 2500 bus operators, across India, countries in South East Asia and Latin America. redBus is a subsidiary of Ibibo Group.The platform is also a part of India’s leading online travel company MakeMyTrip Limited. redBus currently runs in six countries – India, Malaysia, Indonesia, Singapore, Peru and Colombia and has so far registered over 180 million trips, with a customer base of over 20 million.',
 			deeplink: ''
 		},
 		{
@@ -39,7 +41,7 @@
 			app: {
 				name: 'SonyLIV: Originals, Hollywood, LIVE Sport, TV Show',
 				package: 'com.sonyliv',
-				postTime: '02/03/2021',
+				postTime: '02/02/2022 16:09:45',
 				status: 'active',
 				icon: 'https://mofirst.pc.cdn.bitgravity.com/preview_images/381a7670dae5b459323f9e715a5d2cca.webp',
 				id: 28349,
@@ -61,11 +63,40 @@
 				return `https://cdnvideo-api.appbazaar.com/hls/${videoId}/master.m3u8`;
 		}
 	};
+
+	const formatDate = (date) => {
+		//  Input: 'DD/MM/YY'
+		//  Required: 'MM/DD/YY'
+		//  Note: In Date Object Month is zero indexed
+		//  postTime may contain time:  'DD/MM/YY HH:MM:SS'
+		let d = date.split(' ');
+		let dateFormat = d[0].split('/');
+		let formattedDate;
+		if (d.length > 1) {
+			let timeFormat = date.split(' ')[1].split(':');
+			formattedDate = new Date(dateFormat[2], dateFormat[1] - 1, dateFormat[0], ...timeFormat);
+		} else formattedDate = new Date(dateFormat[2], dateFormat[1] - 1, dateFormat[0]);
+
+		let seconds = Math.floor((Date.now() - formattedDate) / 1000);
+		let interval = seconds / 86400;
+		if (interval > 1) {
+			if (interval <= 30) return Math.floor(interval) + ' days ago';
+			else return formattedDate.toDateString().split(' ').slice(1).join(' ');
+		}
+		interval = seconds / 3600;
+		if (interval > 1) return Math.floor(interval) + ' hours ago';
+
+		interval = seconds / 60;
+		if (interval > 1) return Math.floor(interval) + ' minutes ago';
+
+		return Math.floor(seconds) + ' seconds ago';
+	};
 </script>
 
 <svelte:head>
 	<title>App Timeline</title>
 </svelte:head>
+
 <div class="main">
 	{#each apps as app, index (index)}
 		<div class="app-container">
@@ -77,11 +108,13 @@
 					<div class="app-title">
 						{app.app.name}
 					</div>
-					<div class="app-subtitle">{app.app.postTime}</div>
+					<div class="app-subtitle">
+						{app.app.postTime ? formatDate(app.app.postTime) : app.app.postTime}
+					</div>
 				</div>
 			</div>
 			<div class="app-desc">
-				{app.description}
+				<Paragraph text={app.description} maxLength={300} />
 			</div>
 			{#if app.type === 'video'}
 				<div class="app-media">
@@ -110,6 +143,7 @@
 		line-height: normal;
 		letter-spacing: normal;
 		font-family: Roboto;
+		font-weight: 400;
 	}
 	.app-logo img {
 		width: 52px;
@@ -124,8 +158,8 @@
 	}
 	.app-header {
 		display: grid;
-		grid-template-columns: 1fr auto 7fr;
-		grid-column-gap: 15px;
+		grid-template-columns: 52px 190px;
+		grid-column-gap: 9px;
 		align-items: center;
 	}
 	.app-title {
@@ -137,6 +171,7 @@
 		font-size: 15px;
 		color: #323232;
 		font-weight: 500;
+		margin-bottom: 4px;
 	}
 	.app-subtitle {
 		font-size: 12px;
@@ -154,7 +189,7 @@
 	}
 	.app-media {
 		width: 100%;
-		border-radius: 12px;
+		border-radius: 15px;
 		overflow: hidden;
 		position: relative;
 		margin-top: 10px;
