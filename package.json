@@ -27,5 +27,10 @@
     "tslib": "^2.3.1",
     "typescript": "~4.5.4"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "qs": "^6.10.3",
+    "svelte-inview": "^2.1.1"
+  }
 }

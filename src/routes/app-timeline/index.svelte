@@ -122,12 +122,15 @@
 						height="156px"
 						preload="none"
 						poster={app.thumbnail}
-						video-url={'https://www.w3schools.com/tags/movie.mp4'}
-					/>
+						controls
+						>
+						<source src={'https://www.w3schools.com/tags/movie.mp4'} type="video/mp4">
+						<track kind="captions" />
+					</video>
 				</div>
 			{:else if app.type === 'photo'}
 				<div class="app-media">
-					<img src={app.app.postImage} />
+					<img src={app.app.postImage} alt="{app.app.name}}" />
 				</div>
 			{/if}
 		</div>
